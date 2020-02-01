@@ -150,7 +150,7 @@ class Download {
         for (int i = 0; i < numConnections; i++) {
             // create a range for each thread to get
             if (i+1 == numConnections) {
-                rangeQueue.add(new Range(i * rnSize, contentLength -1, i * rnSize ));
+                rangeQueue.add(new Range(i * rnSize, contentLength, i * rnSize ));
                 break;
             } 
             rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize - 1, i * rnSize));
@@ -317,7 +317,7 @@ class Download {
 
     public void pushWritten(long written) {
         this.written += written;
-        System.out.println("written: " + written);
+//        System.out.println("written: " + written);
     }
 
     public boolean rangeQueueEmpty(){

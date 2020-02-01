@@ -106,17 +106,15 @@ public class HTTPRangeGetter implements Runnable {
             int bytesRead = strm.read(data, 0, toRead);
             //// String headerRegex = "Content-Range: bytes (\\d+)-(\\d+)/(\\d+)";
             //// Pattern r = Pattern.compile(headerRegex);
-            String dataStr = new String(data);
-            int index = dataStr.indexOf(DCRLF);
-            String chunkData = dataStr.substring(index + DCRLF.length());
+            String chunkData = new String(data);
             Chunk ck = new Chunk(chunkData.getBytes(), range.getPOS() + range.getStart(), bytesRead);
             fw.pushToQueue(ck, range);
             while (!range.isComplete()) {
-                data = new byte[CHUNK_SIZE];
                 toRead = (int) range.getRemaining();
                 if ( toRead < 0 || toRead > CHUNK_SIZE){
                     toRead = CHUNK_SIZE;
                 }
+                data = new byte[toRead];
                 bytesRead = strm.read(data, 0, toRead);
                 ck = new Chunk(data, range.getPOS() + range.getStart(), bytesRead);
                 fw.pushToQueue(ck, range);
