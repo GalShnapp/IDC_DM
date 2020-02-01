@@ -149,8 +149,9 @@ class Download {
         long rnSize = contentLength / numConnections;
         for (int i = 0; i < numConnections; i++) {
             // create a range for each thread to get
-            if (i -1 == numConnections) {
-                rangeQueue.add(new Range(i * rnSize, (i + 1) * rnSize - 1, contentLength));
+            if (i-1 == numConnections) {
+                rangeQueue.add(new Range(i * rnSize, contentLength+1, i * rnSize ));
+
                 break;
             }
             rangeQueue.add(new Range(i * rnSize, (i + 1) * rnSize - 1, i * rnSize));
@@ -197,7 +198,7 @@ class Download {
             }
 
             this.contentLength = con.getContentLengthLong(); // "assume this is good"
-
+            System.out.println("cont length: " + contentLength);
             con.disconnect();
         } catch (SocketTimeoutException ste) {
             System.err.println("initial connection timed out. Shutting down");

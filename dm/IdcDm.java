@@ -49,7 +49,6 @@ public class IdcDm {
         fileWriterThread.start();
         ThreadPoolExecutor workerThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numConnections);
         for (int i = 0; i < numConnections; i++) {
-            System.out.println("starting range getter");
             workerThreadPool.execute(new Thread(new HTTPRangeGetter(session)));
         }
         try {

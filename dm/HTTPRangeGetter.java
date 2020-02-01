@@ -37,6 +37,7 @@ public class HTTPRangeGetter implements Runnable {
             if (rn.isSignal()) {
                 flag = false;
             } else {
+                System.out.println(rn);
                 ranges.add(rn);
             }
         }
@@ -49,7 +50,6 @@ public class HTTPRangeGetter implements Runnable {
      * @throws SocketTimeoutException
      */
     private void downloadRange() throws IOException, InterruptedException, SocketTimeoutException {
-        System.out.println("dbg: it is time to download!");
         URL url;
         InputStream strm;
         HttpURLConnection con;
@@ -62,11 +62,9 @@ public class HTTPRangeGetter implements Runnable {
         }
         // generate request headrs
         for (Range range : ranges) {
-            System.out.println("dbg: create params");
             rangeParamString += range.getStringParams();
             rangeParamString += ", ";
         }
-        System.out.println("dbg " + rangeParamString);
         rangeParamString.substring(0, rangeParamString.length() - 2);
         
         
@@ -92,12 +90,14 @@ public class HTTPRangeGetter implements Runnable {
         // Range range = ranges.getFirst();
 
         for (Range range : ranges) {
-
             byte[] data = new byte[CHUNK_SIZE];
             int toRead = (int) range.getRemaining();
             if ( toRead < 0 || toRead > CHUNK_SIZE){
                 toRead = CHUNK_SIZE;
             }
+            System.out.println("***************************************");
+            System.out.println("           Initiating a range");
+            System.out.println("***************************************");
             System.out.println("dbg: printing range:");
             System.out.println(range);
             System.out.printf("b.len: %d, off: %d, len: %d \n",data.length,0,toRead);
@@ -131,7 +131,6 @@ public class HTTPRangeGetter implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("run of range getter");
         try {
             downloadRange();
         } catch (IOException | InterruptedException e) {
