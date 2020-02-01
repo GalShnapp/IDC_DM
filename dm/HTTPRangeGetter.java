@@ -24,7 +24,6 @@ public class HTTPRangeGetter implements Runnable {
         this.session = session;
         this.fw = session.getFileWriter();
         ranges = new LinkedList<Range>();
-        setRanges();
     }
 
     /**
@@ -37,7 +36,7 @@ public class HTTPRangeGetter implements Runnable {
             if (rn.isSignal()) {
                 flag = false;
             } else {
-                System.out.println(rn);
+                System.out.println("ADDING RANGE: " + rn);
                 ranges.add(rn);
             }
         }
@@ -86,7 +85,6 @@ public class HTTPRangeGetter implements Runnable {
             boundary = contentType.substring(lastIndex + 1, contentType.length());
         }
         int Clength = con.getContentLength();
-        System.out.println("HERE IS THE ISSUES: " + con.getHeaderField("Content-Range"));
         
         strm = (InputStream) con.getContent();
         // Range range = ranges.getFirst();
@@ -97,17 +95,15 @@ public class HTTPRangeGetter implements Runnable {
             if ( toRead < 0 || toRead > CHUNK_SIZE){
                 toRead = CHUNK_SIZE;
             }
-            System.out.println("***************************************");
-            System.out.println("           Initiating a range");
-            System.out.println("***************************************");
-            System.out.println("dbg: printing range:");
-            System.out.println(range);
-            System.out.printf("b.len: %d, off: %d, len: %d \n",data.length,0,toRead);
+//            System.out.println("***************************************");
+//            System.out.println("           Initiating a range");
+//            System.out.println("***************************************");
+//            System.out.println("dbg: printing range:");
+//            System.out.println(range);
+//            System.out.printf("b.len: %d, off: %d, len: %d \n",data.length,0,toRead);
             int bytesRead = strm.read(data, 0, toRead);
-            //// String headerRegex = "Content-Range: bytes (\\d+)-(\\d+)/(\\d+)";
-            //// Pattern r = Pattern.compile(headerRegex);
             String chunkData = new String(data);
-            Chunk ck = new Chunk(chunkData.getBytes(), range.getPOS() + range.getStart(), bytesRead);
+            Chunk ck = new Chunk(chunkData.getBytes(), range.getPOS(), bytesRead);
             fw.pushToQueue(ck, range);
             while (!range.isComplete()) {
                 toRead = (int) range.getRemaining();
@@ -116,17 +112,19 @@ public class HTTPRangeGetter implements Runnable {
                 }
                 data = new byte[toRead];
                 bytesRead = strm.read(data, 0, toRead);
-                ck = new Chunk(data, range.getPOS() + range.getStart(), bytesRead);
+                ck = new Chunk(data, range.getPOS(), bytesRead);
                 fw.pushToQueue(ck, range);
             }
         }
         con.disconnect();
+        System.out.println("PUSHING SIGNAL  FROM EOD RANGE");
         fw.pushToQueue(new Chunk(new byte[1], -1, -1), new Range(-1, -1, -1)); // Push an out of work
                                                                                               // flag
     }
 
     @Override
     public void run() {
+        setRanges();
         try {
             downloadRange();
         } catch (IOException | InterruptedException e) {

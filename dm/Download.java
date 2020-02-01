@@ -123,7 +123,7 @@ class Download {
     /**
      * @return a single range from the range queue
      */
-    public Range getRange() {
+    public synchronized Range getRange() {
         return rangeQueue.poll();
     }
 
@@ -153,7 +153,7 @@ class Download {
                 rangeQueue.add(new Range(i * rnSize, contentLength, i * rnSize ));
                 break;
             } 
-            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize - 1, i * rnSize));
+            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize, i * rnSize));
         }
         for (int i = 0; i < numConnections; i++) {
             rangeQueue.add(new Range(-1, -1,-1));
