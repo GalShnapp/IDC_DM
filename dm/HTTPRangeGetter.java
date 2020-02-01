@@ -53,7 +53,7 @@ public class HTTPRangeGetter implements Runnable {
         URL url;
         InputStream strm;
         HttpURLConnection con;
-        String rangeParamString = "";
+        String rangeParamString = "bytes=";
         String boundary = "";
 
         if (ranges.size() == 0){
@@ -86,6 +86,8 @@ public class HTTPRangeGetter implements Runnable {
             boundary = contentType.substring(lastIndex + 1, contentType.length());
         }
         int Clength = con.getContentLength();
+        System.out.println("HERE IS THE ISSUES: " + con.getHeaderField("Content-Range"));
+        
         strm = (InputStream) con.getContent();
         // Range range = ranges.getFirst();
 

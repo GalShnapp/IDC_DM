@@ -46,7 +46,7 @@ class Range implements Serializable {
     }
 
     String getStringParams() {
-        return "bytes=" + start + "-" + end;
+        return  start + "-" + end;
     }
 
     public void setLast(long end) {
