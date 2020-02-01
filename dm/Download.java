@@ -301,7 +301,7 @@ class Download {
     /************** status calls **************/
 
     public boolean downloadDone() {
-        return ((written.get() == this.contentLength -1 ) && allDownloadersDone());
+        return ((written.get() == this.contentLength  ) && allDownloadersDone());
     }
 
     public boolean allDownloadersDone() {
