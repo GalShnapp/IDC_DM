@@ -65,8 +65,8 @@ public class HTTPRangeGetter implements Runnable {
             rangeParamString += range.getStringParams();
             rangeParamString += ", ";
         }
-        rangeParamString.substring(0, rangeParamString.length() - 2);
-        
+        rangeParamString = rangeParamString.substring(0, rangeParamString.length() - 2);
+        System.out.println(rangeParamString);
         
 
         // request
