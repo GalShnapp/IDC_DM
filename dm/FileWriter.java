@@ -53,9 +53,11 @@ public class FileWriter implements Runnable {
                 Chunk chunk = outQueue.take();
                 if (chunk.isSignal()) {
                     session.signalDownloaderDone();
+       //             System.out.println("************************ CHUNK IS SIGNAL!");
                 } else {
                     byte[] data = chunk.getData();
                     long offset = chunk.getOffset();
+                    //System.out.println(new String(data));
                     raf.seek(offset);
                     raf.write(data);
                     session.pushWritten(chunk.getSize_in_bytes());
@@ -78,7 +80,7 @@ public class FileWriter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("FILE WRITER DONE!");
+        //System.out.println("FILE WRITER DONE!");
     }
     
     /**

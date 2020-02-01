@@ -36,7 +36,7 @@ public class HTTPRangeGetter implements Runnable {
             if (rn.isSignal()) {
                 flag = false;
             } else {
-                System.out.println("ADDING RANGE: " + rn);
+//                System.out.println("ADDING RANGE: " + rn);
                 ranges.add(rn);
             }
         }
@@ -65,7 +65,7 @@ public class HTTPRangeGetter implements Runnable {
             rangeParamString += ", ";
         }
         rangeParamString = rangeParamString.substring(0, rangeParamString.length() - 2);
-        System.out.println(rangeParamString);
+     //   System.out.println(rangeParamString);
         
 
         // request
@@ -103,9 +103,18 @@ public class HTTPRangeGetter implements Runnable {
 //            System.out.printf("b.len: %d, off: %d, len: %d \n",data.length,0,toRead);
             int bytesRead = strm.read(data, 0, toRead);
             String chunkData = new String(data);
-            int index = chunkData.indexOf(DCRLF);
-            if ( index != -1){
-                chunkData = chunkData.substring(index + DCRLF.length(), chunkData.length());
+            System.out.println("initail chunk");
+            System.out.println(chunkData);
+            System.out.println(boundary);
+            int indexb = chunkData.indexOf(boundary);
+            int indexc = chunkData.indexOf(DCRLF);
+            if (indexb != -1) {
+                System.out.println("indexb: " + indexb);
+                chunkData = chunkData.substring(indexb + boundary.length(), chunkData.length());
+            } 
+            if (indexc != -1){
+                chunkData = chunkData.substring(indexc + DCRLF.length(), chunkData.length());
+                System.out.println("indexc: " + indexc);
             }
             Chunk ck = new Chunk(chunkData.getBytes(), range.getPOS(), bytesRead);
             fw.pushToQueue(ck, range);
@@ -122,7 +131,7 @@ public class HTTPRangeGetter implements Runnable {
             }
         }
         con.disconnect();
-        System.out.println("PUSHING SIGNAL  FROM EOD RANGE");
+    //    System.out.println("PUSHING SIGNAL  FROM  RANGE");
         fw.pushToQueue(new Chunk(new byte[1], -1, -1), new Range(-1, -1, -1)); // Push an out of work
                                                                                               // flag
     }
@@ -135,6 +144,6 @@ public class HTTPRangeGetter implements Runnable {
         } catch (IOException | InterruptedException e) {
             System.err.println("Exception while fetching data from server: " + e);
         }
-        System.out.println("downloader going to sleep");
+    //    System.out.println("downloader going to sleep");
     }
 }

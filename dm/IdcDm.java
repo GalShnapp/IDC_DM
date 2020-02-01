@@ -29,7 +29,7 @@ public class IdcDm {
 
         DownloadURL(url, numConnections);
         
-        System.out.println("FINISH PROGRAM!");
+     // System.out.println("FINISH PROGRAM!");
     }
 
     /**
@@ -54,17 +54,17 @@ public class IdcDm {
             workerThreadPool.execute(new Thread(new HTTPRangeGetter(session)));
         }
         try {
-            System.out.println("BEFORE AWAIT");
+     //       System.out.println("BEFORE AWAIT");
             workerThreadPool.shutdown();
-            System.out.println("BEFORE JOIN");
+       //     System.out.println("BEFORE JOIN");
             fileWriterThread.join();
-            System.out.println("AFTER JOIN");
+       //     System.out.println("AFTER JOIN");
         } catch (InterruptedException ex) {
             System.err.println("Exception While Collecting Data: " + ex);
             ex.printStackTrace();
         }
         session.end();
-        System.out.println("Download Finished!");
+     //   System.out.println("Download Finished!");
 
     }
 

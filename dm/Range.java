@@ -22,7 +22,7 @@ class Range implements Serializable {
 	}
 
 	public long getRemaining() {
-		return end - pos;
+		return (end - pos) + 1;
 	}
 
 	public long getLength() {
@@ -35,11 +35,11 @@ class Range implements Serializable {
 
 	public boolean isComplete() {
 		if (pos > end) {
-			System.out.println("## pos: " + pos + " - end: " + end);
+//			System.out.println("## pos: " + pos + " - end: " + end);
 		} else if (pos == end) {
-			System.out.println("$$ pos: " + pos + " - end: " + end);
+//			System.out.println("$$ pos: " + pos + " - end: " + end);
 		}
-		return pos == end -1 || pos == end;
+		return pos >= end;
 	}
 
 	Long getStart() {

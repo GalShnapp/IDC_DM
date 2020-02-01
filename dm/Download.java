@@ -155,7 +155,7 @@ class Download {
                 rangeQueue.add(new Range(i * rnSize, contentLength -1  , i * rnSize ));
                 break;
             } 
-            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize - 1, i * rnSize));
+            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize -1, i * rnSize));
         }
         for (int i = 0; i < numConnections; i++) {
             rangeQueue.add(new Range(-1, -1,-1));
@@ -199,7 +199,7 @@ class Download {
             }
 
             this.contentLength = con.getContentLengthLong(); // "assume this is good"
-            System.out.println("cont length: " + contentLength);
+  //          System.out.println("cont length: " + contentLength);
             con.disconnect();
         } catch (SocketTimeoutException ste) {
             System.err.println("initial connection timed out. Shutting down");
@@ -301,7 +301,7 @@ class Download {
     /************** status calls **************/
 
     public boolean downloadDone() {
-        return ((written.get() == this.contentLength  ) && allDownloadersDone());
+        return ((written.get() == this.contentLength ) && allDownloadersDone());
     }
 
     public boolean allDownloadersDone() {
@@ -309,11 +309,12 @@ class Download {
     }
 
     public int signalDownloaderDone() {
-        System.out.println("downloader singaled done");
-        System.out.println("There are: " + downloadersRemaining.get() + "downloaders");
+//        System.out.println("downloader singaled done");
+//        System.out.println("There are: " + downloadersRemaining.get() + "downloaders");
         int a = downloadersRemaining.get();
         int b = downloadersRemaining.decrementAndGet();
-        System.out.println("before: " + a + "after: " + b);
+//        System.out.println("before: " + a + "after: " + b);
+//        System.out.println("written: " + getWritten());
         return b;
     }
 
