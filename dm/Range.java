@@ -22,7 +22,7 @@ class Range implements Serializable {
 	}
 
 	public long getRemaining() {
-		return end - (pos + start);
+		return end - pos;
 	}
 
 	public long getLength() {
