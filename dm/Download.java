@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.io.*;
 
 /**
@@ -24,7 +25,8 @@ class Download {
     private URL url; // a url for the requested resource
     File mtdFile; // saves metadata to storage. helps for recovery
     private long contentLength; // size of the target file
-    private long written;
+    //private long written;
+    private AtomicLong written;
     private boolean[] wasChunkDLed; // signals wether ot not the i'th chunk had been downloaded
                                     // we are limited to files that are smaller than 20GB
     public final int MAX_CONNECTIONS = 16; // seems like a reasonable cap.
@@ -39,7 +41,7 @@ class Download {
     Download(String url, int numConnections) {
         this.url_str = url;
         this.numConnections = (numConnections > MAX_CONNECTIONS) ? MAX_CONNECTIONS : numConnections;
-        this.written = 0;
+        this.written = new AtomicLong(0);
         this.contentLength = -1;
         this.filename = StripPath(url);
         this.metadataFilename = filename + ".mtd";
@@ -144,16 +146,16 @@ class Download {
         queryForHeaders();
         int chucnksInDl = (int) contentLength/HTTPRangeGetter.CHUNK_SIZE;
         wasChunkDLed = new boolean[10000000];
-        written = 0;
+        written.set(0);
         Arrays.fill(wasChunkDLed, false); // no chunk was downloaded
         long rnSize = contentLength / numConnections;
         for (int i = 0; i < numConnections; i++) {
             // create a range for each thread to get
             if (i+1 == numConnections) {
-                rangeQueue.add(new Range(i * rnSize, contentLength, i * rnSize ));
+                rangeQueue.add(new Range(i * rnSize, contentLength -1  , i * rnSize ));
                 break;
             } 
-            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize, i * rnSize));
+            rangeQueue.add(new Range(i * rnSize , (i + 1) * rnSize - 1, i * rnSize));
         }
         for (int i = 0; i < numConnections; i++) {
             rangeQueue.add(new Range(-1, -1,-1));
@@ -255,7 +257,7 @@ class Download {
             fis.close();
 
             this.contentLength = mfo.contentLength;
-            this.written = mfo.written;
+            this.written.set(mfo.written);
             this.wasChunkDLed = mfo.wasChunkDLed.clone();
 
         } catch (FileNotFoundException fnfe) {
@@ -299,7 +301,7 @@ class Download {
     /************** status calls **************/
 
     public boolean downloadDone() {
-        return written == contentLength && allDownloadersDone();
+        return ((written.get() == this.contentLength -1 ) && allDownloadersDone());
     }
 
     public boolean allDownloadersDone() {
@@ -316,19 +318,23 @@ class Download {
     }
 
     public void pushWritten(long written) {
-        this.written += written;
-//        System.out.println("written: " + written);
+        long l = this.written.getAndAdd(written);
+        // System.out.println("written: " + l);
     }
 
     public boolean rangeQueueEmpty(){
         return this.rangeQueue.isEmpty();
     }
 
+    public long getWritten(){
+        return this.written.get();
+    }
+
         /**
      * @return percentage of data downloaded
      */
     public int getPercentage() {
-        return (int) ((100 * written) / contentLength);
+        return (int) ((100 * written.get()) / contentLength);
     }
    
 }

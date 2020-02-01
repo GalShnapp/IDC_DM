@@ -14,7 +14,7 @@ class Range implements Serializable {
 		this.start = start;
 		this.end = end;
 		this.pos = pos;
-		this.len = end - start;
+		this.len = end - start + 1;
 	}
 
 	public long getPOS() {
@@ -39,7 +39,7 @@ class Range implements Serializable {
 		} else if (pos == end) {
 			System.out.println("$$ pos: " + pos + " - end: " + end);
 		}
-		return pos - 1 == end || pos == end;
+		return pos == end -1 || pos == end;
 	}
 
 	Long getStart() {

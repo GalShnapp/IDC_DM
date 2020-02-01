@@ -103,6 +103,10 @@ public class HTTPRangeGetter implements Runnable {
 //            System.out.printf("b.len: %d, off: %d, len: %d \n",data.length,0,toRead);
             int bytesRead = strm.read(data, 0, toRead);
             String chunkData = new String(data);
+            int index = chunkData.indexOf(DCRLF);
+            if ( index != -1){
+                chunkData = chunkData.substring(index + DCRLF.length(), chunkData.length());
+            }
             Chunk ck = new Chunk(chunkData.getBytes(), range.getPOS(), bytesRead);
             fw.pushToQueue(ck, range);
             while (!range.isComplete()) {
@@ -114,6 +118,7 @@ public class HTTPRangeGetter implements Runnable {
                 bytesRead = strm.read(data, 0, toRead);
                 ck = new Chunk(data, range.getPOS(), bytesRead);
                 fw.pushToQueue(ck, range);
+                
             }
         }
         con.disconnect();
