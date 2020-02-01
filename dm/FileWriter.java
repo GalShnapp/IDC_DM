@@ -78,7 +78,7 @@ public class FileWriter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+        System.out.println("FILE WRITER DONE!");
     }
     
     /**

@@ -118,10 +118,6 @@ public class HTTPRangeGetter implements Runnable {
                 bytesRead = strm.read(data, 0, toRead);
                 ck = new Chunk(data, range.getPOS() + range.getStart(), bytesRead);
                 fw.pushToQueue(ck, range);
-                if(range.getPOS() == 6545){
-                    System.out.println(range.getEnd());
-                    break;
-                }
             }
         }
         con.disconnect();

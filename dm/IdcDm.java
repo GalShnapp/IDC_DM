@@ -28,6 +28,8 @@ public class IdcDm {
         System.out.printf("...\n");
 
         DownloadURL(url, numConnections);
+        
+        System.out.println("FINISH PROGRAM!");
     }
 
     /**
@@ -52,8 +54,11 @@ public class IdcDm {
             workerThreadPool.execute(new Thread(new HTTPRangeGetter(session)));
         }
         try {
-            workerThreadPool.awaitTermination(1000, TimeUnit.HOURS);
+            System.out.println("BEFORE AWAIT");
+            workerThreadPool.shutdown();
+            System.out.println("BEFORE JOIN");
             fileWriterThread.join();
+            System.out.println("AFTER JOIN");
         } catch (InterruptedException ex) {
             System.err.println("Exception While Collecting Data: " + ex);
             ex.printStackTrace();
